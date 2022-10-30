@@ -29,6 +29,11 @@ outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 outPath,outName = os.path.split(outputFC)
 arcpy.CreateFeatureclass_management(outPath,outName,"POINT","","","",outputSR)
 
+# Add TagID, LC, IQ, and Date fields to the output feature class
+arcpy.AddField_management(outputFC,"TagID","LONG")
+arcpy.AddField_management(outputFC,"LC","TEXT")
+arcpy.AddField_management(outputFC,"Date","DATE")
+
 # Construct a while loop to iterate through all lines in the datafile
 # Open the ARGOS data file for reading
 inputFileObj = open(inputFile,'r')
@@ -69,3 +74,5 @@ while lineString:
     
 #Close the file object
 inputFileObj.close()
+
+

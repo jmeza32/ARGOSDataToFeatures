@@ -18,8 +18,16 @@ arcpy.env.overwriteOutput = True
 
 # Set input variables (Hard-wired) Hard wired means the code will read the files in at a later time. Variables are coded as full paths.
 inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
+
+# Set output spatial reference
+outputSR = arcpy.SpatialReference(54002) 
+
 outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
+## Prepare a new feature class to which we'll add tracking points
+# Create an empty feature class; requires the path and name as separate parameters, eventually add spatial ref
+outPath,outName = os.path.split(outputFC)
+arcpy.CreateFeatureclass_management(outPath,outName,"POINT","","","",outputSR)
 
 # Construct a while loop to iterate through all lines in the datafile
 # Open the ARGOS data file for reading
@@ -61,9 +69,3 @@ while lineString:
     
 #Close the file object
 inputFileObj.close()
-
-
-## Prepare a new feature class to which we'll add tracking points
-# Create an empty feature class; requires the path and name as separate parameters
-outPath,outName = os.path.split(outputFC)
-arcpy.CreateFeatureclass_management(outPath, outName)

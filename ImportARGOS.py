@@ -17,10 +17,8 @@ arcpy.env.overwriteOutput = True
 
 # Set input variables (Hard-wired) Hard wired means the code will read the files in at a later time. Variables are coded as full paths.
 inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
-
 # Set output spatial reference
 outputSR = arcpy.SpatialReference(54002) 
-
 outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
 ## Prepare a new feature class to which we'll add tracking points
@@ -32,6 +30,9 @@ arcpy.CreateFeatureclass_management(outPath,outName,"POINT","","","",outputSR)
 arcpy.AddField_management(outputFC,"TagID","LONG")
 arcpy.AddField_management(outputFC,"LC","TEXT")
 arcpy.AddField_management(outputFC,"Date","DATE")
+
+# Create insert cursor
+cur = arcpy.da.InsertCursor(outputFC, ['SHAPE@', 'TagID', 'LC', 'Date'])
 
 # Construct a while loop to iterate through all lines in the datafile
 # Open the ARGOS data file for reading
@@ -86,11 +87,18 @@ while lineString:
             obsPoint.X = obsLon
             obsPoint.Y = obsLat
             
+            # Convert point object to a geometry
+            inputSR = arcpy.SpatialReference(4326)
+            obsPointGeom = arcpy.PointGeometry(obsPoint,inputSR)
+            
+            # Insert feature into feature class
+            feature = cur.insertRow((obsPointGeom,tagID,obsLC,obsDate.replace(".","/") + " " + obsTime))
+            
         # Handle any error
         except Exception as e:
             print(f"Error adding record {tagID} to the output: {e}")
             
-            
+        
         
     # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()
@@ -98,4 +106,6 @@ while lineString:
 #Close the file object
 inputFileObj.close()
 
+#Delete the cursor
+del cur
 

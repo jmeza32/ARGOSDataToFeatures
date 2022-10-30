@@ -16,12 +16,12 @@ import arcpy, sys, os
 arcpy.env.overwriteOutput = True
 
 # Set input variables (Hard-wired) Hard wired means the code will read the files in at a later time. Variables are coded as full paths.
-inputFolder = 'V:/ARGOSTracking/Data/ARGOSData'
+inputFolder = sys.argv[1] #'V:/ARGOSTracking/Data/ARGOSData'
 # inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
 
 # Set output spatial reference
-outputSR = arcpy.SpatialReference(54002) 
-outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
+outputSR = sys.argv[2] #arcpy.SpatialReference(54002) 
+outputFC = sys.argv[3] #"V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
 # Create a list of files in the user provided folder
 inputFiles = os.listdir(inputFolder)
@@ -45,7 +45,7 @@ for inputFile in inputFiles:
     if inputFile == 'README.txt': continue
 
     # Give user a status update
-    print(f'Working on file {inputFile}')
+    arcpy.AddMessage(f'Working on file {inputFile}')
     
     # Add path to input file(s)
     inputFile = os.path.join(inputFolder, inputFile)
@@ -113,8 +113,6 @@ for inputFile in inputFiles:
             # Handle any error
             except Exception as e:
                 print(f"Error adding record {tagID} to the output: {e}")
-                
-            
             
         # Move to the next line so the while loop progresses
         lineString = inputFileObj.readline()

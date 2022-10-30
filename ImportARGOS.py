@@ -10,7 +10,6 @@
 ## Author: Joshua Meza-Fidalgo jem150@duke.edu (for ENV859)
 ##Created on Sun Oct 16 15:57:07 2022
 ##---------------------------------------------------------------------
-
 # Import Packages
 import arcpy, sys, os
 
@@ -67,7 +66,31 @@ while lineString:
         obsLon= line2Data[5]
         
         # Print results to see how we're doing
-        print (tagID,obsDate,obsTime,obsLC,"Lat:"+obsLat,"Long:"+obsLon)
+        #print (tagID,obsDate,obsTime,obsLC,"Lat:"+obsLat,"Long:"+obsLon)
+        
+        # Try to convert coordinates to point object
+        try:
+            # Convert raw coordinate strings to numbers
+            if obsLat[-1] == 'N':
+                obsLat = float(obsLat[:-1])
+            else:
+                obsLat = float(obsLat[:-1]) * -1
+            if obsLon[-1] == 'E':
+                obsLon = float(obsLon[:-1])
+            else:
+                obsLon = float(obsLon[:-1]) * -1
+                
+            # Create point object from lat/long coordinates
+            
+            obsPoint = arcpy.Point()
+            obsPoint.X = obsLon
+            obsPoint.Y = obsLat
+            
+        # Handle any error
+        except Exception as e:
+            print(f"Error adding record {tagID} to the output: {e}")
+            
+            
         
     # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()

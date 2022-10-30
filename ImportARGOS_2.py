@@ -11,17 +11,14 @@
 ##Created on Sun Oct 16 15:57:07 2022
 ##---------------------------------------------------------------------
 
-# Import Packages
+#%% Import Packages
 import arcpy, sys, os
 
-arcpy.env.overwriteOutput = True
-
-# Set input variables (Hard-wired) Hard wired means the code will read the files in at a later time. Variables are coded as full paths.
+#%%# Set input variables (Hard-wired) Hard wired means the code will read the files in at a later time. Variables are coded as full paths.
 inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
 outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
-
-# Construct a while loop to iterate through all lines in the datafile
+#%% Construct a while loop to iterate through all lines in the datafile
 # Open the ARGOS data file for reading
 inputFileObj = open(inputFile,'r')
 
@@ -39,9 +36,6 @@ while lineString:
         
         # Extract attributes from the datum header line
         tagID = lineData[0]
-        obsDate = lineData[3]
-        obsTime = lineData[4]
-        obsLC = lineData[7]
         
         # Extract location info from the next line
         line2String = inputFileObj.readline()
@@ -54,16 +48,10 @@ while lineString:
         obsLon= line2Data[5]
         
         # Print results to see how we're doing
-        print (tagID,obsDate,obsTime,obsLC,"Lat:"+obsLat,"Long:"+obsLon)
+        print (tagID,"Lat:"+obsLat,"Long:"+obsLon)
         
     # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()
     
 #Close the file object
 inputFileObj.close()
-
-
-## Prepare a new feature class to which we'll add tracking points
-# Create an empty feature class; requires the path and name as separate parameters
-outPath,outName = os.path.split(outputFC)
-arcpy.CreateFeatureclass_management(outPath, outName)
